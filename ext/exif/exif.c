@@ -2446,11 +2446,11 @@ static void* exif_ifd_make_value(image_info_data *info_data, int motorola_intel 
 					data_ptr += 8;
 					break;
 				case TAG_FMT_SINGLE:
-					memmove(data_ptr, &info_data->value.f, byte_count);
+					memmove(data_ptr, &info_value->f, 4);
 					data_ptr += 4;
 					break;
 				case TAG_FMT_DOUBLE:
-					memmove(data_ptr, &info_data->value.d, byte_count);
+					memmove(data_ptr, &info_value->d, 8);
 					data_ptr += 8;
 					break;
 			}
@@ -2722,6 +2722,7 @@ static int exif_process_user_comment(image_info_type *ImageInfo, char **pszInfoP
 static int exif_process_unicode(image_info_type *ImageInfo, xp_field_type *xp_field, int tag, char *szValuePtr, int ByteCount TSRMLS_DC)
 {
 	xp_field->tag = tag;	
+	xp_field->value = NULL;
 
 	/* Copy the comment */
 #if EXIF_USE_MBSTRING

@@ -172,7 +172,7 @@ main() {
   ac_cv_crypt_blowfish=no
 ])])
 
-AC_CACHE_CHECK(for SHA512 crypt, ac_cv_crypt_SHA512,[
+AC_CACHE_CHECK(for SHA512 crypt, ac_cv_crypt_sha512,[
 AC_TRY_RUN([
 #if HAVE_UNISTD_H
 #include <unistd.h>
@@ -194,14 +194,14 @@ main() {
 	exit(0);
 #endif
 }],[
-  ac_cv_crypt_SHA512=yes
+  ac_cv_crypt_sha512=yes
 ],[
-  ac_cv_crypt_SHA512=no
+  ac_cv_crypt_sha512=no
 ],[
-  ac_cv_crypt_SHA512=no
+  ac_cv_crypt_sha512=no
 ])])
 
-AC_CACHE_CHECK(for SHA256 crypt, ac_cv_crypt_SHA256,[
+AC_CACHE_CHECK(for SHA256 crypt, ac_cv_crypt_sha256,[
 AC_TRY_RUN([
 #if HAVE_UNISTD_H
 #include <unistd.h>
@@ -223,11 +223,11 @@ main() {
 	exit(0);
 #endif
 }],[
-  ac_cv_crypt_SHA256=yes
+  ac_cv_crypt_sha256=yes
 ],[
-  ac_cv_crypt_SHA256=no
+  ac_cv_crypt_sha256=no
 ],[
-  ac_cv_crypt_SHA256=no
+  ac_cv_crypt_sha256=no
 ])])
 
 

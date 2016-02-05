@@ -167,6 +167,11 @@ AC_DEFUN([PHP_GD_FREETYPE2],[
         FREETYPE2_INC_DIR=$i/include/freetype2
         break
       fi
+      if test -f "$i/include/freetype2/freetype.h"; then
+        FREETYPE2_DIR=$i
+        FREETYPE2_INC_DIR=$i/include/freetype2
+        break
+      fi
     done
 
     if test -z "$FREETYPE2_DIR"; then
@@ -359,7 +364,7 @@ dnl Header path
   done
 
 dnl Library path
-  for i in $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
+  for i in $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR lib gd1.3 gd ""; do
     test -f "$PHP_GD/$i/libgd.$SHLIB_SUFFIX_NAME" || test -f "$PHP_GD/$i/libgd.a" && GD_LIB="$PHP_GD/$i"
   done
 

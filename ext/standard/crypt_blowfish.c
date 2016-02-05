@@ -646,6 +646,10 @@ static void BF_set_key(const char *key, BF_key expanded, BF_key initial,
 	initial[0] ^= sign;
 }
 
+static const unsigned char flags_by_subtype[26] =
+	{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 0};
+
 static char *BF_crypt(const char *key, const char *setting,
 	char *output, int size,
 	BF_word min)
@@ -653,9 +657,6 @@ static char *BF_crypt(const char *key, const char *setting,
 #if BF_ASM
 	extern void _BF_body_r(BF_ctx *ctx);
 #endif
-	static const unsigned char flags_by_subtype[26] =
-		{2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 0};
 	struct {
 		BF_ctx ctx;
 		BF_key expanded_key;
@@ -821,9 +822,10 @@ char *php_crypt_blowfish_rn(const char *key, const char *setting,
 {
 	const char *test_key = "8b \xd0\xc1\xd2\xcf\xcc\xd8";
 	const char *test_setting = "$2a$00$abcdefghijklmnopqrstuu";
-	static const char * const test_hash[2] =
-		{"VUrPmXD6q/nVSSp7pNDhCR9071IfIRe\0\x55", /* $2x$ */
-		"i1D709vfamulimlGcq0qq3UvuUasvEa\0\x55"}; /* $2a$, $2y$ */
+	static const char * const test_hashes[2] =
+		{"i1D709vfamulimlGcq0qq3UvuUasvEa\0\x55", /* 'a', 'b', 'y' */
+		"VUrPmXD6q/nVSSp7pNDhCR9071IfIRe\0\x55"}; /* 'x' */
+	const char *test_hash = test_hashes[0];
 	char *retval;
 	const char *p;
 	int save_errno, ok;
@@ -845,17 +847,20 @@ char *php_crypt_blowfish_rn(const char *key, const char *setting,
  * detected by the self-test.
  */
 	memcpy(buf.s, test_setting, sizeof(buf.s));
-	if (retval)
+	if (retval) {
+		unsigned int flags = flags_by_subtype[
+		    (unsigned int)(unsigned char)setting[2] - 'a'];
+		test_hash = test_hashes[flags & 1];
 		buf.s[2] = setting[2];
+	}
+
 	memset(buf.o, 0x55, sizeof(buf.o));
 	buf.o[sizeof(buf.o) - 1] = 0;
 	p = BF_crypt(test_key, buf.s, buf.o, sizeof(buf.o) - (1 + 1), 1);
 
 	ok = (p == buf.o &&
 	    !memcmp(p, buf.s, 7 + 22) &&
-	    !memcmp(p + (7 + 22),
-	    test_hash[(unsigned int)(unsigned char)buf.s[2] & 1],
-	    31 + 1 + 1 + 1));
+            !memcmp(p + (7 + 22), test_hash, 31 + 1 + 1 + 1));
 
 	{
 		const char *k = "\xff\xa3" "34" "\xff\xff\xff\xa3" "345";
@@ -885,7 +890,7 @@ char *_crypt_gensalt_blowfish_rn(const char *prefix, unsigned long count,
 	if (size < 16 || output_size < 7 + 22 + 1 ||
 	    (count && (count < 4 || count > 31)) ||
 	    prefix[0] != '$' || prefix[1] != '2' ||
-	    (prefix[2] != 'a' && prefix[2] != 'y')) {
+	    (prefix[2] != 'a' && prefix[2] != 'b' && prefix[2] != 'y')) {
 		if (output_size > 0) output[0] = '\0';
 		__set_errno((output_size < 7 + 22 + 1) ? ERANGE : EINVAL);
 		return NULL;

@@ -614,6 +614,7 @@ PHPAPI void php_pcre_match_impl(pcre_cache_entry *pce, char *subject, int subjec
 	}
 
 	offsets = (int *)safe_emalloc(size_offsets, sizeof(int), 0);
+	memset(offsets, 0, size_offsets * sizeof(int));
 
 	/* Allocate match sets array and initialize the values. */
 	if (global && subpats_order == PREG_PATTERN_ORDER) {

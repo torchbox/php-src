@@ -796,6 +796,9 @@ PHPAPI int vspprintf(char **pbuf, size_t max_len, const char *format, va_list ap
 {
 	smart_str xbuf = {0};
 
+	if (!pbuf)
+		return 0;
+
 	xbuf_format_converter(&xbuf, format, ap);
 
 	if (max_len && xbuf.len > max_len) {

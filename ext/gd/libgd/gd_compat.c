@@ -33,3 +33,6 @@ const char * gdPngGetVersionString()
 }
 #endif
 
+#if !HAVE_GD_BUNDLED
+#include "gd_security.c" // overflow2
+#endif
