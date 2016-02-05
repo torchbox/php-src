@@ -982,6 +982,7 @@ static void spl_dllist_it_helper_move_forward(spl_ptr_llist_element **traverse_p
 				(*traverse_position_ptr)++;
 			}
 		}
+		var_push_dtor(&var_hash, &elem);
 
 		SPL_LLIST_DELREF(old);
 		SPL_LLIST_CHECK_ADDREF(*traverse_pointer_ptr);
