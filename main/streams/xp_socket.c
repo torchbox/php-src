@@ -247,16 +247,27 @@ static inline int sock_recvfrom(php_netstream_data_t *sock, char *buf, size_t bu
 		struct sockaddr **addr, socklen_t *addrlen
 		TSRMLS_DC)
 {
-	php_sockaddr_storage sa;
-	socklen_t sl = sizeof(sa);
 	int ret;
 	int want_addr = textaddr || addr;
 
 	if (want_addr) {
+		php_sockaddr_storage sa;
+		socklen_t sl = sizeof(sa);
 		ret = recvfrom(sock->socket, buf, buflen, flags, (struct sockaddr*)&sa, &sl);
 		ret = (ret == SOCK_CONN_ERR) ? -1 : ret;
-		php_network_populate_name_from_sockaddr((struct sockaddr*)&sa, sl,
-			textaddr, textaddrlen, addr, addrlen TSRMLS_CC);
+		if (sl) {
+			php_network_populate_name_from_sockaddr((struct sockaddr*)&sa, sl,
+					textaddr, textaddrlen, addr, addrlen TSRMLS_CC);
+		} else {
+			if (textaddr) {
+				*textaddr = estrndup("", 0);
+				*textaddrlen = 0;
+			}
+			if (addr) {
+				*addr = NULL;
+				*addrlen = 0;
+			}
+		}
 	} else {
 		ret = recv(sock->socket, buf, buflen, flags);
 		ret = (ret == SOCK_CONN_ERR) ? -1 : ret;
@@ -293,7 +304,17 @@ static int php_sockop_set_option(php_stream *stream, int option, int value, void
 				if (sock->socket == -1) {
 					alive = 0;
 				} else if (php_pollfd_for(sock->socket, PHP_POLLREADABLE|POLLPRI, &tv) > 0) {
-					if (0 >= recv(sock->socket, &buf, sizeof(buf), MSG_PEEK) && php_socket_errno() != EWOULDBLOCK) {
+#ifdef PHP_WIN32
+					int ret;
+#else
+					ssize_t ret;
+#endif
+					int err;
+
+					ret = recv(sock->socket, &buf, sizeof(buf), MSG_PEEK);
+					err = php_socket_errno();
+					if (0 == ret || /* the counterpart did properly shutdown*/
+						(0 > ret && err != EWOULDBLOCK && err != EAGAIN)) { /* there was an unrecoverable error */
 						alive = 0;
 					}
 				}
