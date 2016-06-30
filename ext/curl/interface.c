@@ -2195,7 +2195,12 @@ string_copy:
 					return 1;
 				}
 			}
-			zend_hash_index_update(ch->to_free->slist, (ulong) option, &slist, sizeof(struct curl_slist *), NULL);
+
+			if (Z_REFCOUNT_P(ch->clone) <= 1) {
+				zend_hash_index_update(ch->to_free->slist, (ulong) option, &slist, sizeof(struct curl_slist *), NULL);
+			} else {
+				zend_hash_next_index_insert(ch->to_free->slist, &slist, sizeof(struct curl_slist *), NULL);
+			}
 
 			error = curl_easy_setopt(ch->cp, option, slist);
 
