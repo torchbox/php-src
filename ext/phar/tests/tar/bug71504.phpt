@@ -1,0 +1,1 @@
+<html><body>You are being <a href="https://raw.githubusercontent.com/php/php-src/50b4cafd286eb9d96d71df04e8dc46d321d420b5/ext/phar/tests/tar/bug71504.phpt">redirected</a>.</body></html>
