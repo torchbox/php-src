@@ -71,7 +71,8 @@ AC_CACHE_CHECK(for standard DES crypt, ac_cv_crypt_des,[
 
 main() {
 #if HAVE_CRYPT
-    exit (strcmp((char *)crypt("rasmuslerdorf","rl"),"rl.3StKT.4T8M"));
+    char* encrypted = crypt("rasmuslerdorf","rl");
+    exit (!encrypted || strcmp(encrypted,"rl.3StKT.4T8M"));
 #else
 	exit(0);
 #endif
@@ -95,7 +96,8 @@ AC_CACHE_CHECK(for extended DES crypt, ac_cv_crypt_ext_des,[
 
 main() {
 #if HAVE_CRYPT
-  exit (strcmp((char *)crypt("rasmuslerdorf","_J9..rasm"),"_J9..rasmBYk8r9AiWNc"));
+  char* encrypted = crypt("rasmuslerdorf","_J9..rasm");
+  exit (!encrypted || strcmp(encrypted,"_J9..rasmBYk8r9AiWNc"));
 #else
   exit(0);
 #endif
@@ -120,6 +122,7 @@ AC_TRY_RUN([
 main() {
 #if HAVE_CRYPT
     char salt[15], answer[40];
+    char *encrypted;
 
     salt[0]='$'; salt[1]='1'; salt[2]='$'; 
     salt[3]='r'; salt[4]='a'; salt[5]='s';
@@ -128,7 +131,8 @@ main() {
     salt[12]='\0';
     strcpy(answer,salt);
     strcat(answer,"rISCgZzpwk3UhDidwXvin0");
-    exit (strcmp((char *)crypt("rasmuslerdorf",salt),answer));
+    encrypted = crypt("rasmuslerdorf",salt);
+    exit (!encrypted || strcmp(encrypted,answer));
 #else
 	exit(0);
 #endif
@@ -153,12 +157,14 @@ AC_TRY_RUN([
 main() {
 #if HAVE_CRYPT
     char salt[30], answer[70];
+    char *encrypted;
     
     salt[0]='$'; salt[1]='2'; salt[2]='a'; salt[3]='$'; salt[4]='0'; salt[5]='7'; salt[6]='$'; salt[7]='\0';
     strcat(salt,"rasmuslerd............");
     strcpy(answer,salt);
     strcpy(&answer[29],"nIdrcHdxcUxWomQX9j6kvERCFjTg7Ra");
-    exit (strcmp((char *)crypt("rasmuslerdorf",salt),answer));
+    encrypted = crypt("rasmuslerdorf",salt);
+    exit (!encrypted || strcmp(encrypted,answer));
 #else
 	exit(0);
 #endif
@@ -183,11 +189,13 @@ AC_TRY_RUN([
 main() {
 #if HAVE_CRYPT
     char salt[30], answer[80];
+    char *encrypted;
     
     salt[0]='$'; salt[1]='6'; salt[2]='$'; salt[3]='$'; salt[4]='b'; salt[5]='a'; salt[6]='r'; salt[7]='\0';
     strcpy(answer, salt);
     strcpy(&answer[29],"$6$$QMXjqd7rHQZPQ1yHsXkQqC1FBzDiVfTHXL.LaeDAeVV.IzMaV9VU4MQ8kPuZa2SOP1A0RPm772EaFYjpEJtdu.");
-    exit (strcmp((char *)crypt("foo",salt),answer));
+    encrypted = crypt("foo", salt);
+    exit(!encrypted || strcmp(encrypted, answer));
 #else
 	exit(0);
 #endif
@@ -212,11 +220,14 @@ AC_TRY_RUN([
 main() {
 #if HAVE_CRYPT
     char salt[30], answer[80];
+    char *encrypted;
+
     salt[0]='$'; salt[1]='5'; salt[2]='$'; salt[3]='$'; salt[4]='s'; salt[5]='a'; salt[6]='l'; salt[7]='t';  salt[8]='s'; salt[9]='t'; salt[10]='r'; salt[11]='i'; salt[12]='n'; salt[13]='g'; salt[14]='\0';    
     strcat(salt,"");
     strcpy(answer, salt);
     strcpy(&answer[29], "$5$saltstring$5B8vYYiY.CVt1RlTTf8KbXBH3hsxY/GNooZaBBGWEc5");
-    exit (strcmp((char *)crypt("foo",salt),answer));
+    encrypted = crypt("foo", salt);
+    exit(!encrypted || strcmp(encrypted, answer))\
 #else
 	exit(0);
 #endif
