@@ -157,7 +157,7 @@ static void zend_ini_get_var(zval *result, zval *name TSRMLS_DC)
 
 /* {{{ ini_error()
 */
-static void ini_error(char *msg)
+static void ini_error(const char *msg)
 {
 	char *error_buf;
 	int error_buf_len;
