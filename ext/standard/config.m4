@@ -74,7 +74,7 @@ main() {
     char* encrypted = crypt("rasmuslerdorf","rl");
     exit (!encrypted || strcmp(encrypted,"rl.3StKT.4T8M"));
 #else
-	exit(0);
+	exit(1);
 #endif
 }],[
   ac_cv_crypt_des=yes
@@ -99,7 +99,7 @@ main() {
   char* encrypted = crypt("rasmuslerdorf","_J9..rasm");
   exit (!encrypted || strcmp(encrypted,"_J9..rasmBYk8r9AiWNc"));
 #else
-  exit(0);
+  exit(1);
 #endif
 }],[
   ac_cv_crypt_ext_des=yes
@@ -134,7 +134,7 @@ main() {
     encrypted = crypt("rasmuslerdorf",salt);
     exit (!encrypted || strcmp(encrypted,answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }],[
   ac_cv_crypt_md5=yes
@@ -166,7 +166,7 @@ main() {
     encrypted = crypt("rasmuslerdorf",salt);
     exit (!encrypted || strcmp(encrypted,answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }],[
   ac_cv_crypt_blowfish=yes
@@ -197,7 +197,7 @@ main() {
     encrypted = crypt("foo", salt);
     exit(!encrypted || strcmp(encrypted, answer));
 #else
-	exit(0);
+	exit(1);
 #endif
 }],[
   ac_cv_crypt_sha512=yes
@@ -229,7 +229,7 @@ main() {
     encrypted = crypt("foo", salt);
     exit(!encrypted || strcmp(encrypted, answer))\
 #else
-	exit(0);
+	exit(1);
 #endif
 }],[
   ac_cv_crypt_sha256=yes
