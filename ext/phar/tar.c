@@ -492,7 +492,7 @@ bail:
 		}
 		phar_set_inode(&entry TSRMLS_CC);
 		zend_hash_update(&myphar->manifest, entry.filename, entry.filename_len, (void*)&entry, sizeof(phar_entry_info), (void **) &newentry);
-		ZEND_ASSERT(newentry != NULL);
+		assert(newentry != NULL);
 
 		if (entry.is_persistent) {
 			++entry.manifest_pos;
