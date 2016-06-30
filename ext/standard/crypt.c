@@ -288,21 +288,26 @@ PHP_FUNCTION(crypt)
 #  elif defined(CRYPT_R_CRYPTD)
 		CRYPTD buffer;
 #  else
-#    error Data struct used by crypt_r() is unknown. Please report.
+#   error Data struct used by crypt_r() is unknown. Please report.
 #  endif
 		crypt_res = crypt_r(str, salt, &buffer);
-		if (!crypt_res || (salt[0]=='*' && salt[1]=='0')) {
-				if (salt[0]=='*' && salt[1]=='0') {
-					RETURN_STRING("*1", 1);
-				} else {
-					RETURN_STRING("*0", 1);
-				}
-		} else {
-			RETURN_STRING(crypt_res, 1);
-		}
 	}
+# elif defined(HAVE_CRYPT)
+	crypt_res = crypt(password, salt);
+# else
+#  error No crypt() implementation
 # endif
 #endif
+
+	if (!crypt_res || (salt[0]=='*' && salt[1]=='0')) {
+			if (salt[0]=='*' && salt[1]=='0') {
+				RETURN_STRING("*1", 1);
+			} else {
+				RETURN_STRING("*0", 1);
+			}
+	} else {
+		RETURN_STRING(crypt_res, 1);
+	}
 }
 /* }}} */
 #endif
