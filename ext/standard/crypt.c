@@ -280,8 +280,9 @@ PHP_FUNCTION(crypt)
 	}
 #else
 
-# if defined(HAVE_CRYPT_R) && (defined(_REENTRANT) || defined(_THREAD_SAFE))
 	{
+# if defined(HAVE_CRYPT_R) && (defined(_REENTRANT) || defined(_THREAD_SAFE))
+
 #  if defined(CRYPT_R_STRUCT_CRYPT_DATA)
 		struct crypt_data buffer;
 		memset(&buffer, 0, sizeof(buffer));
@@ -290,24 +291,28 @@ PHP_FUNCTION(crypt)
 #  else
 #   error Data struct used by crypt_r() is unknown. Please report.
 #  endif
+
 		crypt_res = crypt_r(str, salt, &buffer);
-	}
+
 # elif defined(HAVE_CRYPT)
-	crypt_res = crypt(password, salt);
+
+		crypt_res = crypt(str, salt);
+
 # else
 #  error No crypt() implementation
 # endif
-#endif
 
-	if (!crypt_res || (salt[0]=='*' && salt[1]=='0')) {
-			if (salt[0]=='*' && salt[1]=='0') {
-				RETURN_STRING("*1", 1);
-			} else {
-				RETURN_STRING("*0", 1);
-			}
-	} else {
-		RETURN_STRING(crypt_res, 1);
+		if (!crypt_res || (salt[0]=='*' && salt[1]=='0')) {
+				if (salt[0]=='*' && salt[1]=='0') {
+					RETURN_STRING("*1", 1);
+				} else {
+					RETURN_STRING("*0", 1);
+				}
+		} else {
+			RETURN_STRING(crypt_res, 1);
+		}
 	}
+#endif
 }
 /* }}} */
 #endif

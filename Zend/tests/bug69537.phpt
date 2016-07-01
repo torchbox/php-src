@@ -5,7 +5,7 @@ Bug #69537 (__debugInfo with empty string for key gives error)
 class Foo {
 
     public function __debugInfo(){
-        return ['' => 1];
+        return array('' => 1);
     }
 }
 

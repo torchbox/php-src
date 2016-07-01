@@ -1,1 +1,18 @@
-<html><body>You are being <a href="https://raw.githubusercontent.com/php/php-src/50b4cafd286eb9d96d71df04e8dc46d321d420b5/ext/phar/tests/tar/bug71504.phpt">redirected</a>.</body></html>
+--TEST--
+Bug #71504: Parsing of tar file with duplicate filenames causes memory leak
+--SKIPIF--
+<?php if (!extension_loaded('phar')) die('skip'); ?>
+<?php if (!extension_loaded("spl")) die("skip SPL not available"); ?>
+<?php if (!extension_loaded("zlib")) die("skip zlib not available"); ?>
+--FILE--
+<?php
+$fname = str_replace('\\', '/', dirname(__FILE__) . '/files/HTML_CSS-1.5.4.tgz');
+try {
+	$tar = new PharData($fname);
+} catch(Exception $e) {
+	echo $e->getMessage() . "\n";
+}
+?>
+===DONE===
+--EXPECT--
+===DONE===

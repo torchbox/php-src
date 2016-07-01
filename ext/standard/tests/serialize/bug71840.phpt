@@ -1,1 +1,9 @@
-<html><body>You are being <a href="https://raw.githubusercontent.com/php/php-src/6f241f5fad3a26810c96d5b634bfbceaeac10176/ext/standard/tests/serialize/bug71840.phpt">redirected</a>.</body></html>
+--TEST--
+Bug #71840 (Unserialize accepts wrongly data)
+--FILE--
+<?php
+var_dump(unserialize('a:1:{s:0:""0a:0:{}}'));
+?>
+--EXPECTF--
+Notice: unserialize(): Error at offset 11 of 19 bytes in %sbug71840.php on line %d
+bool(false)
